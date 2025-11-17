@@ -1,6 +1,8 @@
 
 import os
+import sys
 import json
+import argparse
 from dotenv import load_dotenv
 from openai import OpenAI
 from sqlalchemy import create_engine, text
@@ -32,32 +34,63 @@ embedding_model = SentenceTransformer(preferred_model)
 client = OpenAI(api_key=OPENAI_KEY) if USE_OPENAI else None
 
 # ----------------- Helpers -----------------
+def _fetch_one(query: str, params: dict):
+    """Utility to run a single-row query safely."""
+    session = Session()
+    try:
+        return session.execute(text(query), params).fetchone()
+    finally:
+        session.close()
+
+
 def detect_stored_dim_for_patient(patient_id: str):
     session = Session()
     try:
-        row = session.execute(text("""
-            SELECT lc.embedding_json
-            FROM lab_chunks lc
-            JOIN lab_reports lr ON lc.report_id = lr.id
-            WHERE lr.patient_id = :patient_id
-            LIMIT 1
-        """), {"patient_id": patient_id}).fetchone()
+        # Try JSON-based schema first
+        row = None
+        try:
+            row = session.execute(text("""
+                SELECT lc.embedding_json
+                FROM lab_chunks lc
+                JOIN lab_reports lr ON lc.report_id = lr.id
+                WHERE lr.patient_id = :patient_id
+                LIMIT 1
+            """), {"patient_id": patient_id}).fetchone()
+        except Exception:
+            row = None
+
+        # Fallback to vector-based schema
+        if not row:
+            try:
+                row = session.execute(text("""
+                    SELECT lc.embedding
+                    FROM lab_chunks lc
+                    JOIN lab_reports lr ON lc.report_id = lr.id
+                    WHERE lr.patient_id = :patient_id
+                    LIMIT 1
+                """), {"patient_id": patient_id}).fetchone()
+            except Exception:
+                row = None
         if not row:
             return None
         emb_json = row[0]
         if emb_json is None:
             return None
-        if isinstance(emb_json, str):
-            try:
-                emb = json.loads(emb_json)
-            except Exception:
+        # emb_json may be JSON text, Python list, memoryview, or vector type
+        try:
+            if isinstance(emb_json, (bytes, bytearray)):
+                # unlikely, but guard
+                return None
+            if isinstance(emb_json, str):
                 try:
-                    emb = eval(emb_json)
+                    emb = json.loads(emb_json)
                 except Exception:
-                    return None
-        else:
-            emb = emb_json
-        return len(emb) if hasattr(emb, "__len__") else None
+                    emb = eval(emb_json)
+            else:
+                emb = list(emb_json) if not hasattr(emb_json, "__len__") else emb_json
+            return len(emb) if hasattr(emb, "__len__") else None
+        except Exception:
+            return None
     finally:
         session.close()
 
@@ -102,12 +135,33 @@ def retrieve_chunks_python(patient_id: str, query: str, k=3):
 
     session = Session()
     try:
-        rows = session.execute(text("""
-            SELECT lc.id, lc.chunk_text, lc.embedding_json, lc.metadata_json
-            FROM lab_chunks lc
-            JOIN lab_reports lr ON lc.report_id = lr.id
-            WHERE lr.patient_id = :patient_id
-        """), {"patient_id": patient_id}).fetchall()
+        rows = []
+        # Try JSON-based schema
+        try:
+            rows = session.execute(text("""
+                SELECT lc.id, lc.chunk_text, lc.embedding_json AS emb_col, lc.metadata_json AS meta_col
+                FROM lab_chunks lc
+                JOIN lab_reports lr ON lc.report_id = lr.id
+                WHERE lr.patient_id = :patient_id
+            """), {"patient_id": patient_id}).fetchall()
+            mode = "json"
+        except Exception:
+            rows = []
+            mode = None
+
+        # Fallback to vector-based schema
+        if not rows:
+            try:
+                rows = session.execute(text("""
+                    SELECT lc.id, lc.chunk_text, lc.embedding AS emb_col, lc.metadata AS meta_col
+                    FROM lab_chunks lc
+                    JOIN lab_reports lr ON lc.report_id = lr.id
+                    WHERE lr.patient_id = :patient_id
+                """), {"patient_id": patient_id}).fetchall()
+                mode = "vector"
+            except Exception:
+                rows = []
+                mode = None
 
         if not rows:
             return []
@@ -118,16 +172,24 @@ def retrieve_chunks_python(patient_id: str, query: str, k=3):
             chunk_id = r[0]
             chunk_text = r[1]
             emb_json = r[2]
-            if isinstance(emb_json, str):
-                try:
-                    emb = json.loads(emb_json)
-                except Exception:
+            # Parse embedding based on mode/shape
+            if mode == "json":
+                if isinstance(emb_json, str):
                     try:
-                        emb = eval(emb_json)
+                        emb = json.loads(emb_json)
                     except Exception:
-                        continue
+                        try:
+                            emb = eval(emb_json)
+                        except Exception:
+                            continue
+                else:
+                    emb = emb_json
             else:
-                emb = emb_json
+                # vector column or other iterable
+                try:
+                    emb = list(emb_json) if not isinstance(emb_json, (list, tuple, np.ndarray)) else emb_json
+                except Exception:
+                    continue
             try:
                 emb_arr = np.array(emb, dtype=float)
             except Exception:
@@ -181,20 +243,86 @@ def generate_answer(chunks: list, query: str):
     return f"Based on the patient's lab report excerpts:\n\n{top_excerpt}\n\n(Consult clinician for interpretation.)"
 
 # ----------------- Run example -----------------
-if __name__ == "__main__":
-    print("Running RAG test pipeline...")
+def lookup_latest_patient_id():
+    """Return most recent patient_id from lab_reports."""
+    session = Session()
+    try:
+        row = session.execute(text("""
+            SELECT patient_id
+            FROM lab_reports
+            ORDER BY created_at DESC
+            LIMIT 1
+        """), {}).fetchone()
+        return row[0] if row else None
+    finally:
+        session.close()
 
-    patient_id = "7e0da30e-8a99-450c-9908-c0e2c95ab939"
-    query = "My uric acid value is?"
+
+def lookup_patient_id_by_name(name: str):
+    session = Session()
+    try:
+        row = session.execute(text("""
+            SELECT patient_id
+            FROM lab_reports
+            WHERE LOWER(patient_name) = LOWER(:name)
+            ORDER BY created_at DESC
+            LIMIT 1
+        """), {"name": name}).fetchone()
+        return row[0] if row else None
+    finally:
+        session.close()
+
+
+def list_recent_patients(limit: int = 5):
+    session = Session()
+    try:
+        rows = session.execute(text("""
+            SELECT DISTINCT patient_id, patient_name, created_at
+            FROM lab_reports
+            ORDER BY created_at DESC
+            LIMIT :lim
+        """), {"lim": limit}).fetchall()
+        return [(r[0], r[1]) for r in rows]
+    finally:
+        session.close()
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Query RAG over lab reports")
+    parser.add_argument("--patient-id", dest="patient_id", default=None, help="Patient UUID to query")
+    parser.add_argument("--patient-name", dest="patient_name", default=None, help="Patient name to resolve to latest ID")
+    parser.add_argument("--latest", action="store_true", help="Use most recent patient by created_at (default if nothing provided)")
+    parser.add_argument("--question", dest="question", default="My uric acid value is?", help="User question")
+    parser.add_argument("-k", dest="k", type=int, default=3, help="Top-K chunks to retrieve")
+    args = parser.parse_args()
+
+    print("Running RAG query pipeline...")
+
+    # Resolve patient_id
+    patient_id = args.patient_id
+    if not patient_id and args.patient_name:
+        patient_id = lookup_patient_id_by_name(args.patient_name)
+    if not patient_id:
+        patient_id = lookup_latest_patient_id()
+
+    if not patient_id:
+        print("No patient data found in DB.\n\nNext steps:\n- Run the extraction pipeline to ingest a report, e.g.:\n  python aarogya-rag/src/extraction_pipeline.py --manual\n- Ensure the same DATABASE_URL is used by both extraction and query pipelines (see .env).")
+        sys.exit(1)
 
     print("Detecting stored embedding dimension for patient...")
     dim = detect_stored_dim_for_patient(patient_id)
     print("Stored embedding dim:", dim)
 
     print("Retrieving chunks (with automatic model selection)...")
-    topk = retrieve_chunks_python(patient_id, query, k=3)
+    topk = retrieve_chunks_python(patient_id, args.question, k=args.k)
     print("Retrieved top chunks (id, sim):", [(c['id'], round(c['sim'], 4)) for c in topk])
 
+    if not topk:
+        print("\nNo chunks found for this patient.\n\nTroubleshooting:\n- Confirm the extraction pipeline inserted chunks for this patient_id.\n- Verify both scripts point to the same DB via DATABASE_URL (.env).\n- List recent patients to cross-check IDs:")
+        recents = list_recent_patients(5)
+        for pid, pname in recents:
+            print(f"  - {pname or 'Unknown'}: {pid}")
+
     print("\nGenerating answer (OpenAI or fallback)...")
-    answer = generate_answer(topk, query)
+    answer = generate_answer(topk, args.question)
     print("\nANSWER:\n", answer)
