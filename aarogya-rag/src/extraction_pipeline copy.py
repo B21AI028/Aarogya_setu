@@ -1,183 +1,200 @@
+
 import os
 import json
-import argparse
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_ollama import OllamaLLM
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from sentence_transformers import SentenceTransformer
+from openai import OpenAI
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-from uuid import uuid4
-import datetime
+from sentence_transformers import SentenceTransformer
+import numpy as np
+import warnings
 
 load_dotenv()
 
-# Config
-DB_URL = os.getenv("DATABASE_URL")
-API_KEY = os.getenv("GOOGLE_API_KEY", "AlzaSyBХcMcKwOgSBaMmUtuf-1K9rXRhXAnVb7k")  # Fallback to your provided key
+# ----------------- Config -----------------
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@localhost:5432/aarogya")
+OPENAI_KEY = os.getenv("OPENAI_API_KEY", None)
+USE_OPENAI = bool(OPENAI_KEY)
 
-if not API_KEY:
-    raise ValueError("GOOGLE_API_KEY must be set in .env or provided.")
-
-engine = create_engine(DB_URL)
+engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
-embedding_model = SentenceTransformer("abhinand/MedEmbed-base-v0.1")  # MedEmbed
-llm_gemini = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash",  # Updated to latest Gemini 2.5 Flash
-    google_api_key=API_KEY,    # Use the key directly
-    temperature=0
-)
-llm_ollama = OllamaLLM(model="gemma:2b")
 
-def pdf_extractor(pdf_path: str):
-    """Extract JSON from PDF using Gemini 2.5 Flash (renamed from extract_from_pdf)."""
-    loader = PyPDFLoader(pdf_path)
-    pages = loader.load()
-    full_text = "\n\n".join([page.page_content for page in pages])
+# Embedding models (may auto-switch to match stored dim)
+preferred_model = "abhinand/MedEmbed-base-v0.1"
+candidate_models = [
+    "abhinand/MedEmbed-base-v0.1",  # 768-dim
+    "all-MiniLM-L6-v2",             # 384-dim
+    "sentence-transformers/all-mpnet-base-v2"
+]
+embedding_model = SentenceTransformer(preferred_model)
 
-    prompt = f"""
-    Extract relevant information from the following lab report text and return as JSON with these fields:
-    - patient_name (str)
-    - patient_id (str, or generate UUID if missing)
-    - date_of_collection (str, YYYY-MM-DD)
-    - date_of_report (str, YYYY-MM-DD)
-    - test_type (str)
-    - doctor_name (str)
-    - lab_name (str)
-    - lab_values (list of dicts: {{"parameter": str, "value": str, "reference_range": str}})
-    - abnormal_findings (list of str)
-    - overall_interpretation (str)
+# OpenAI client (if available)
+client = OpenAI(api_key=OPENAI_KEY) if USE_OPENAI else None
 
-    LAB REPORT TEXT:
-    {full_text}
-
-    Return only valid JSON.
-    """
-
-    try:
-        response = llm_gemini.invoke(prompt)
-        response_text = response.content.strip()
-
-        # Parse JSON (robust)
-        if "```json" in response_text:
-            start = response_text.find("```json") + 7
-            end = response_text.find("```", start)
-            json_text = response_text[start:end].strip()
-        elif response_text.startswith("{"):
-            json_text = response_text
-        else:
-            raise ValueError("No valid JSON in response")
-
-        result = json.loads(json_text)
-        if not result.get("patient_id"):
-            result["patient_id"] = str(uuid4())  # Generate if missing
-        return result, full_text
-    except Exception as e:
-        raise RuntimeError(f"Extraction failed: {e}")
-
-def generate_summary(full_text: str, interpretation: str):
-    """Generate lab summary using Ollama."""
-    prompt = f"""
-    Summarize the following lab report text and interpretation into a concise medical summary (200-400 words).
-    Focus on key findings, abnormalities, and clinical implications.
-    TEXT: {full_text}
-    INTERPRETATION: {interpretation}
-    """
-    summary = llm_ollama.invoke(prompt)
-    return summary
-
-def chunk_summary(summary: str, chunk_size=300, overlap=50):
-    """Chunk summary into tokens."""
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=chunk_size * 4,  # Approx tokens
-        chunk_overlap=overlap * 4,
-        separators=["\n\n", "\n", ". "]
-    )
-    chunks = splitter.create_documents([summary])
-    return [chunk.page_content for chunk in chunks]
-
-def store_to_db(extracted: dict, full_text: str, chunks: list):
-    """Store to Postgres: reports, params, chunks with embeddings."""
+# ----------------- Helpers -----------------
+def detect_stored_dim_for_patient(patient_id: str):
     session = Session()
     try:
-        report_id = uuid4()
-        created_at = datetime.datetime.now()
-
-        # Store lab_report
-        session.execute(text("""
-            INSERT INTO lab_reports (id, patient_id, patient_name, date_of_collection, date_of_report,
-                                    test_type, doctor_name, lab_name, overall_interpretation, abnormal_findings, raw_text)
-            VALUES (:id, :patient_id, :patient_name, :date_of_collection, :date_of_report,
-                    :test_type, :doctor_name, :lab_name, :overall_interpretation, :abnormal_findings, :raw_text)
-        """), {
-            "id": report_id,
-            "patient_id": extracted["patient_id"],
-            "patient_name": extracted["patient_name"],
-            "date_of_collection": extracted.get("date_of_collection"),
-            "date_of_report": extracted.get("date_of_report"),
-            "test_type": extracted.get("test_type"),
-            "doctor_name": extracted.get("doctor_name"),
-            "lab_name": extracted.get("lab_name"),
-            "overall_interpretation": extracted["overall_interpretation"],
-            "abnormal_findings": extracted["abnormal_findings"],
-            "raw_text": full_text
-        })
-
-        # Store lab_params
-        for param in extracted["lab_values"]:
-            is_abnormal = param["parameter"] in [f.strip() for af in extracted["abnormal_findings"] for f in af.split()]  # Simple check
-            session.execute(text("""
-                INSERT INTO lab_params (report_id, parameter, value, reference_range, is_abnormal)
-                VALUES (:report_id, :parameter, :value, :reference_range, :is_abnormal)
-            """), {
-                "report_id": report_id,
-                "parameter": param["parameter"],
-                "value": param["value"],
-                "reference_range": param["reference_range"],
-                "is_abnormal": is_abnormal
-            })
-
-        # Embed and store chunks
-        for i, chunk_text in enumerate(chunks):
-            embedding = embedding_model.encode(chunk_text).tolist()
-            session.execute(text("""
-                INSERT INTO lab_chunks (report_id, chunk_text, embedding, metadata)
-                VALUES (:report_id, :chunk_text, :embedding::vector, :metadata)
-            """), {
-                "report_id": report_id,
-                "chunk_text": chunk_text,
-                "embedding": embedding,
-                "metadata": json.dumps({"chunk_id": i, "summary_type": "lab_summary"})
-            })
-
-        session.commit()
-        print(f"Stored report {report_id} with {len(extracted['lab_values'])} params and {len(chunks)} chunks.")
-        return report_id
-    except Exception as e:
-        session.rollback()
-        raise e
+        row = session.execute(text("""
+            SELECT lc.embedding_json
+            FROM lab_chunks lc
+            JOIN lab_reports lr ON lc.report_id = lr.id
+            WHERE lr.patient_id = :patient_id
+            LIMIT 1
+        """), {"patient_id": patient_id}).fetchone()
+        if not row:
+            return None
+        emb_json = row[0]
+        if emb_json is None:
+            return None
+        if isinstance(emb_json, str):
+            try:
+                emb = json.loads(emb_json)
+            except Exception:
+                try:
+                    emb = eval(emb_json)
+                except Exception:
+                    return None
+        else:
+            emb = emb_json
+        return len(emb) if hasattr(emb, "__len__") else None
     finally:
         session.close()
 
-# Run the pipeline
+def find_matching_model_for_dim(dim: int):
+    global embedding_model
+    if dim is None:
+        return None
+    for m in candidate_models:
+        try:
+            tmp = SentenceTransformer(m)
+            vec = tmp.encode("test vector for dimension check")
+            if len(vec) == dim:
+                embedding_model = tmp
+                return m
+        except Exception:
+            continue
+    return None
+
+def cosine_sim(a: np.ndarray, b: np.ndarray):
+    a = np.asarray(a, dtype=float)
+    b = np.asarray(b, dtype=float)
+    if a.shape != b.shape:
+        warnings.warn(f"Embedding shapes differ: query {a.shape} vs chunk {b.shape}. Aligning by trunc/pad.")
+        minlen = min(a.shape[0], b.shape[0])
+        a = a[:minlen]
+        b = b[:minlen]
+    denom = (np.linalg.norm(a) * np.linalg.norm(b))
+    if denom == 0:
+        return 0.0
+    return float(np.dot(a, b) / denom)
+
+def retrieve_chunks_python(patient_id: str, query: str, k=3):
+    stored_dim = detect_stored_dim_for_patient(patient_id)
+    if stored_dim:
+        test_vec = embedding_model.encode("dimension test")
+        if len(test_vec) != stored_dim:
+            matched = find_matching_model_for_dim(stored_dim)
+            if matched:
+                print(f"[info] switched embedding model to '{matched}' to match stored dim {stored_dim}.")
+            else:
+                warnings.warn(f"No candidate model matched stored dim {stored_dim}. Proceeding with current model (may reduce accuracy).")
+
+    session = Session()
+    try:
+        rows = session.execute(text("""
+            SELECT lc.id, lc.chunk_text, lc.embedding_json, lc.metadata_json
+            FROM lab_chunks lc
+            JOIN lab_reports lr ON lc.report_id = lr.id
+            WHERE lr.patient_id = :patient_id
+        """), {"patient_id": patient_id}).fetchall()
+
+        if not rows:
+            return []
+
+        q_emb = embedding_model.encode(query)
+        candidates = []
+        for r in rows:
+            chunk_id = r[0]
+            chunk_text = r[1]
+            emb_json = r[2]
+            if isinstance(emb_json, str):
+                try:
+                    emb = json.loads(emb_json)
+                except Exception:
+                    try:
+                        emb = eval(emb_json)
+                    except Exception:
+                        continue
+            else:
+                emb = emb_json
+            try:
+                emb_arr = np.array(emb, dtype=float)
+            except Exception:
+                continue
+            sim = cosine_sim(q_emb, emb_arr)
+            candidates.append({"id": chunk_id, "text": chunk_text, "sim": sim})
+        candidates.sort(key=lambda x: x["sim"], reverse=True)
+        return candidates[:k]
+    finally:
+        session.close()
+
+# ----------------- Answer generation using OpenAI -----------------
+def generate_answer(chunks: list, query: str):
+    """
+    Use OpenAI chat completion if available. Otherwise fall back to a simple chunk-summary response.
+    """
+    if not chunks:
+        return "No context available for this patient."
+
+    # Build compact context (trim very long chunks to avoid token bloat)
+    max_chars_per_chunk = 2000
+    context = "\n\n".join([ (c["text"][:max_chars_per_chunk] + ("..." if len(c["text"]) > max_chars_per_chunk else "")) for c in chunks ])
+
+    system_msg = (
+        "You are a helpful and cautious medical assistant. "
+        "Answer concisely and reference only the provided lab report context. "
+        "If you are uncertain, advise consulting a clinician."
+    )
+    user_msg = f"CONTEXT:\n{context}\n\nQUESTION: {query}\n\n we have give ans point to point no extra info"
+
+    # Use OpenAI if configured
+    if USE_OPENAI and client:
+        try:
+            resp = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_msg},
+                    {"role": "user", "content": user_msg}
+                ],
+                temperature=0.0,
+                max_tokens=300
+            )
+            text_out = resp.choices[0].message.content.strip()
+            return text_out
+        except Exception as e:
+            # Log but fall back
+            print("[warning] OpenAI call failed:", str(e))
+
+    # Fallback deterministic response if OpenAI not available or fails
+    top_excerpt = "\n\n---\n\n".join([c["text"][:400] for c in chunks])
+    return f"Based on the patient's lab report excerpts:\n\n{top_excerpt}\n\n(Consult clinician for interpretation.)"
+
+# ----------------- Run example -----------------
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Extract and store lab report from PDF")
-    parser.add_argument("--pdf", default="uploads/Nimi.pdf", help="Path to PDF file")
-    args = parser.parse_args()
+    print("Running RAG test pipeline...")
 
-    if not os.path.exists(args.pdf):
-        raise FileNotFoundError(f"PDF not found: {args.pdf}")
+    patient_id = "7e0da30e-8a99-450c-9908-c0e2c95ab939"
+    query = "My uric acid value is?"
 
-    extracted, full_text = pdf_extractor(args.pdf)
-    print(f"Extracted patient: {extracted.get('patient_name', 'N/A')} (ID: {extracted['patient_id']})")
+    print("Detecting stored embedding dimension for patient...")
+    dim = detect_stored_dim_for_patient(patient_id)
+    print("Stored embedding dim:", dim)
 
-    summary = generate_summary(full_text, extracted["overall_interpretation"])
-    print(f"Generated summary length: {len(summary)} chars")
+    print("Retrieving chunks (with automatic model selection)...")
+    topk = retrieve_chunks_python(patient_id, query, k=3)
+    print("Retrieved top chunks (id, sim):", [(c['id'], round(c['sim'], 4)) for c in topk])
 
-    chunks = chunk_summary(summary)
-    print(f"Created {len(chunks)} chunks")
-
-    store_to_db(extracted, full_text, chunks)
-
+    print("\nGenerating answer (OpenAI or fallback)...")
+    answer = generate_answer(topk, query)
+    print("\nANSWER:\n", answer)
