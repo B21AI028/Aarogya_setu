@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg15  # Postgres with AI vector support
+    restart: always
+    environment:
+      POSTGRES_DB: aarogya
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"  # Access from your computer
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Saves data
+      - ./migrations:/docker-entrypoint-initdb.d  # Auto-runs schema on start
+
+volumes:
+  postgres_data:

@@ -1,0 +1,682 @@
+
+--- Page 1 ---
+. MedPlus +
+
+Name POONAM AGARWAL
+
+Age / Sex 37 years / Female
+
+Contact 9650777361
+
+Referral Doctor PAPARAO NADAKUDURU
+
+This Section An abridged abstract. Not a Clinical Laboratory Report NABL Certificate: MC-6095
+
+INVESTIGATION YOUR CURRENT VISIT FROM YOUR PREVIOUS 3 VISITS?
+25-Jan-25 BrRI>
+
+Hemoglobin 10.5 | 12-15
+
+Method: SLS Hemoglobin Detection
+
+NOTES
+a. From previous 3 visits in preceding 2 years. IF your past results are not mentioned, please contact us at 040-6700 6700
+
+b. BRI = Biological Reference Interval. Depending on the test / parameter, the BRI may differ on account of gender and age.
+For the sake of brevity, the units have not been mentioned in this table. Please refer to the Clinical Laboratory Report for
+details.
+
+Note: Please contact us for possible remedial action if test results are unexpected. | Abnormal || * Critical
+
+MEDPLUS HEALTH SERVICES LIMITED H No 11-5-56, Survey No 257 and 258/1, Opp IDPL Railway siding, Moosapet, Kukatpally, Hyderabad, Telangana, 500037
+CIN: L85110TG2006PLC051845 \ 04067006700 M wecare@medplusmart.com ® www.medplusmart.com
+
+
+--- Page 2 ---
+. MedPlus +
+
+Screening & Vaccination Recommendations
+
+GradeA Cervical Cancer, Colorectal Cancer, HIV, Hypertension, Sexually Transmitted Infections
+
+Grade-A: As categorized and recommended by the US Preventive Services Task Force.
+There is high certainty that the net benefit is substantial
+
+Alcohol Abuse (Alcohol Level Serum, GTT), Hepatitis C (Hepatitis C Virus-HCV Antibody
+ELISA), HIV (HIV 1 & 2 Antibody ELISA), Sexually Transmitted Infections (Treponema
+Pallidum Hemagglutination Assay-TPHA), Tobacco Use (Urine Cotinine Nicotine Test),
+Hepatitis B (Hepatitis B Surface Antigen-HBsAg ELISA)
+
+Annual
+
+Hypertension (Hypertension Profile), Obesity (MDx Weight Watch Advanced),
+USG-Liver, USG-Uterus, USG-Abdomen, X Ray-Chest, ECG, 2D Echo, BMD
+
+Cervical Cancer (Pap Smear, Human Papilloma Virus PCR Qualitative), Diabetes (HbA1c)
+, MRI-Pelvis, MRI-Brain, MRI-Spine, CT-Abdomen, CT-Chest
+
+Periodic: every 2y
+
+Periodic: every 3y
+
+Colorectal Cancer (Colonoscopy, MSI Testing), Hyperlipidemia (Lipid Profile), Lung
+
+Periodic: every 5y Cancer
+
+Hepatitis B, Human Papillomavirus (HPV), Influenza, Tetanus, Diphtheria, Acellular
+
+Vaccinations: Important Pertussis (Tdap and Td)
+
+Please consult a Registered Medical Practitioner for review and consultation, before
+
+Important Disclaimer ; .
+P proceeding on the above assessment and recommendations
+
+Note: Please contact us for possible remedial action if test results are unexpected. | Abnormal || * Critical
+
+MEDPLUS HEALTH SERVICES LIMITED H No 11-5-56, Survey No 257 and 258/1, Opp IDPL Railway siding, Moosapet, Kukatpally, Hyderabad, Telangana, 500037
+CIN: L85110TG2006PLC051845 \ 040 6700 6700 M wecare@medplusmart.com ® www.medplusmart.com
+
+
+--- Page 3 ---
+= MedPlus +
+
+Name POONAM AGARWAL Order PTGOC2500775599
+Age / Sex 37 years / Female Sample Drawn 25-Jan-25 / 11:46 AM
+Contact 9650777361 Sample Accepted 25-Jan-25 / 03:11 PM
+Collection Centre INTGHYD95309 Sample Reported 25-Jan-25 / 06:45 PM
+Referral Doctor PAPARAO NADAKUDURU Report Status Final
+
+Ferritin, Serum
+
+SampleType: Serum Department of Clinical Biochemistry
+
+INVESTIGATION RESULT UNITS BIOLOGICAL REFERENCE INTERVAL
+Ferritin 8.5 ng/mL 10-291
+Method: CLIA
+
+Clinical Significance: Ferritin
+¢ Ferritin is a compound composed of iron molecules bound to apoferritin. Stored iron represents about 25% of total iron in the
+body, and most of this iron is stored as ferritin.
+
+* Ferritin is found in serum in low concentrations and is directly proportional to the body’s iron stores.
+
+* Serum ferritin concentration, when analyzed with serum iron, iron-binding capacity, and tissue iron stores, is valuable in the diagnosis of
+
+iron-deficiency anemias, anemias of chronic infection, and conditions such as thalassemia and hemochromatosis.
+* Measurement of serum ferritin is particularly valuable in distinguishing iron-deficiency anemias caused by low iron stores from those
+resulting from inadequate iron utilization.
+
+Note: Please contact us for possible remedial action if test results are unexpected. ma Abnormal || "Critical
+
+MEDPLUS HEALTH SERVICES LIMITED H No 11-5-56, Survey No 257 and 258/1, Opp IDPL Railway siding, Moosapet, Kukatpally, Hyderabad, Telangana, 500037
+CIN: L85110TG2006PLC051845 04067006700 © wecare@medplusmart.com © www.medplusmart.com Page 1 of 4
+
+
+--- Page 4 ---
+= MedPlus +
+
+Name POONAM AGARWAL Order PTGOC2500775599
+Age / Sex 37 years / Female Sample Drawn 25-Jan-25 / 11:46 AM
+Contact 9650777361 Sample Accepted 25-Jan-25 / 03:06 PM
+Collection Centre INTGHYD95309 Sample Reported 25-Jan-25 / 06:30 PM
+Referral Doctor PAPARAO NADAKUDURU Report Status Final
+
+Complete Blood Picture (CBP)
+
+Department of Haematology
+SampleType: Whole Blood EDTA
+
+INVESTIGATION RESULT UNITS BIOLOGICAL REFERENCE INTERVAL
+Hemoglobin 40.5) gm/dL 12-15
+
+Method: SLS Hemoglobin Detection
+
+Hematocrit 38.6 % 36 - 46
+
+Method: RBC Pulse Height Detection
+
+RBC COUNT Ey Millions/ 3.8 - 4.8
+
+Method: HD focussed DC Detection cumm
+
+RED CELL INDICES
+Method: Calculated from RBC HB and HCT
+
+MCV 77.2 fL 83 - 101
+MCH 121.0] pg 27 - 32
+MCHC gm/dL 31.5 - 34.5
+RDW-CV 15.4 % 7.5 - 15.5
+Total Leucocyte Count 9130.0 /cumm 4000 - 10000
+Method: Flow cytometry WNR channel
+
+DIFFERENTIAL LEUCOCYTE COUNT
+
+Method: Flow cytometry Calculated
+
+Neutrophils 68.7 % 40 - 80
+Lymphocytes 22.9 % 20 - 40
+Monocytes 5.5 % 2-10
+Eosinophils 2.8 % 1-6
+Basophils 0.1 % 0-1
+ABSOLUTE LEUCOCYTE COUNT
+
+Method: Flow cytometry WDF channel
+
+Absolute Neutrophil Count 6270.0 /cumm 2000 - 7000
+Absolute Lymphocyte Count 2090.0 /cumm 1000 - 3000
+Absolute Monocyte Count 500.0 /cumm 200 - 1000
+Absolute Eosinophil Count 260.0 /cumm 200 - 500
+
+Absolute Basophil Count /cumm 20 - 100
+
+Platelet Count 2.53 Lakhs/ 1.5-4.0
+Method: HD focussed DC Detection cumm
+
+Mean Platelet Volume 2.7 fL 7-11
+Method: Calculated from PCT and Platelet count
+
+Note: Please contact us for possible remedial action if test results are unexpected. ma Abnormal || "Critical
+
+MEDPLUS HEALTH SERVICES LIMITED H No 11-5-56, Survey No 257 and 258/1, Opp IDPL Railway siding, Moosapet, Kukatpally, Hyderabad, Telangana, 500037
+CIN: L85110TG2006PLC051845 04067006700 © wecare@medplusmart.com © www.medplusmart.com Page 2 of 4
+
+
+--- Page 5 ---
+= MedPlus +
+
+Name POONAM AGARWAL Order PTGOC2500775599
+Age / Sex 37 years / Female Sample Drawn 25-Jan-25 / 11:46 AM
+Contact 9650777361 Sample Accepted 25-Jan-25 / 03:06 PM
+Collection Centre INTGHYD95309 Sample Reported 25-Jan-25 / 06:30 PM
+Referral Doctor PAPARAO NADAKUDURU Report Status Final
+
+Complete Blood Picture (CBP)
+
+Department of Haematology
+SampleType: Whole Blood EDTA
+
+INVESTIGATION RESULT UNITS BIOLOGICAL REFERENCE INTERVAL
+
+PERIPHERAL SMEAR EXAMINATION
+
+Method: Microscopy of Leishman Stained Smear
+
+RBCs Predominantly Normocytic Normochromic. Mild: Anisocytosis.
+WBCs Normal count & Differential.
+
+Platelets Adequate in number & Normal in morphology.
+Hemoparasites No Parasite Found.
+
+Impression NORMOCYTIC NORMOCHROMIC ANEMIA.
+
+Critical limits (alert values) are widely adopted as a standard of good laboratory practice and are defined as test parameter results that
+
+are outside the normal range to a degree that constitute an immediate health risk to the individual or require immediate action on the
+
+part of the ordering physician to avert significant patient morbidity or mortality
+
+Parameter Units Critically Low Critically High
+
+Hemoglobin (birth to 6 days) g/dL <= 12.0 >= 22.0
+
+Hemoglobin (6 days to Adult) g/dL <=7.0 >= 21.0
+
+Hematocrit (birth to 6 days) % <= 35.0 >= 65.0
+
+Hematocrit (6 days to Adult) % <= 21.0 >= 65.0
+
+Total Leucocyte count /cu.mm <= 500.0 >= 50,000.0
+
+Absolute Neutrophil count /cu.mm <= 500.0
+
+Platelet count Lakhs/cu.mm <= 0.20
+
+Note: In addition presence of blasts and hemoparasites (Eg. Malarial parasite) on slide review are critical alerts
+
+Note:
+
+1. Flagged results of Absolute Eosinophil count, Absolute Basophil count & Absolute Monocyte count below the biological reference intervals
+are clinically insignificant.
+
+2. As per the recommendations of International Council for Standardization in Hematology (ICSH), the Differential Leucocyte counts are
+
+additionally being reported as Absolute numbers of each cell per unit volume of blood.
+
+*** END OF THE REPORT ***
+
+S. Abrabost. ea Pak hand
+
+J Abraham Dr G Srinivas Y Prashanth
+Verified by Director-Lab Services Regd no: TSMC-49913 Verified by
+Note: Please contact us for possible remedial action if test results are unexpected. ma Abnormal || "Critical
+
+MEDPLUS HEALTH SERVICES LIMITED H No 11-5-56, Survey No 257 and 258/1, Opp IDPL Railway siding, Moosapet, Kukatpally, Hyderabad, Telangana, 500037
+CIN: L85110TG2006PLC051845 04067006700 © wecare@medplusmart.com © www.medplusmart.com Page 3 of 4
+
+
+--- Page 6 ---
+Conditions of Reporting
+
+1. Laboratory reports will aid in diagnosis of clinical conditions in conjunction with clinical signs, symptoms and related
+investigations. They are best interpreted by qualified medical professionals who understand reporting units,
+reference ranges and limitations of technologies and their correlation with other clinical findings.
+
+2. The interpretations provided by MedPlus are for the guidance of patients and referring doctors. MedPlus nor its
+affiliates assume any liability or responsibility for any damage of any nature whatsoever that may be incurred in any
+person as a result of the use of the information provided in the report.
+
+3.Itis presumed that the test(s) performed are, on the specimen(s)/sample(s) belonging to the patient named or
+identified and the verification of the particulars have been carried out by the patient or his/her representative at the
+point of generation of the said specimen(s) or sample(s).
+
+4.The results of tests may vary from lab to lab and also from time to time for the same parameters for the same
+patient. Assays are performed with reasonable care and in accordance with standard procedures. The reported
+results are dependent on individual assay methods, equipment used, method specificity, sensitivity, drug interaction
+and the quality of the specimen(s)/samples(s) received.
+
+5.Should the results indicate unexpected abnormality, the same should be reconfirmed after appropriate clinical
+correlation.
+
+6. Histopathology specimen(s)/sample(s) will be preserved for one month from the date of testing and slides/reports
+will be preserved for five years. Other clinical specimen(s)/sample(s) will be discarded after seven days from the
+date of testing, unless otherwise specified by the client. Such preservation
+shall be subject to sample integrity.
+
+7. Preliminary Report, if any indicates that the results are primary and they are yet to be reported for one or more of the
+tests, or else, as in case with many microbiology test, a “final” culture, identification or drug susceptibility result might
+be pending. When all results are available the “Preliminary report” will be replaced by “Final Report”. Client shall rely
+only on the final report.
+
+8.This report is not valid for Medico-legal purposes.
+
+9.Tests are performed as per the test schedule in the test listing. In unforeseen circumstances such as non-availability
+of relevant kits, instrument breakdown, natural calamities etc, tests may not be reported as per schedule.
+
+10.The sex of the foetus will not be revealed as per the prenatal diagnostic techniques (PNDT) Act, 1994.
+11.All queries pertaining to this report should be directed to MedPlus Health Services Limited
+
+12.All investigations are limited by the sensitivity and specificity of the assay and the condition of the specimen
+received by the laboratory. Assay result should be interpreted only in the context of other clinical findings and the
+clinical status of the patient.
+
+13.Partial reproduction of this report is not permitted.
+
+Accreditation
+
+NABL accreditation
+signifies that a laboratory
+meets international
+quality standards and is
+competent to provide
+accurate and reliable test
+results. NABL accreditation
+is awarded to those
+laboratory's whose testing
+and calibration services
+are of high quality.
+
+IMPORTANT
+
+You can ask for a copy of
+the NABL certification of
+MedPlus Diagnostics.
+Please email:
+wecare@medplusindia.com
+
+Follow these steps to see all results from last 1 year, in one table
+
+OF Re “893%
+
+1 Poe 4
+€
+
+Qi | MeaPtusts | © © MyAccount Qe < @& Health Records QP
+MedPlus Mart - Online ‘ sega bo fal -
+[ern] ° ant wegen! Tomi Click Here >
+Pharmacy jedPlus Id
+MedPlus Health Services Limited
+ron @ w sol 832041
+29 revlele © 82MB Ratedfor3+@ | poum| @ 11-656, Bhavani Nagar, M.. * — RID:30240048 + Oct 14,2023
+een ee Type: Medical Reports
+Edit Delete
+Explore More
+Click Here | = 832045
+Medicines \ +! = <
+20% Off = =] =  RID:30240045 + Oct 14, 2023
+%
+> << Purchase. My Lab Orders. My Bookings Type: Medical Reports
+~<. History
+Edit Delete
+Diagnostics ;
+About this app > = jee 832046
+75% Off a nenes
+MedPlus is India's most trusted pharmacy with pantienetey | Hasnepecsran | _Rseueany RID 30255461 + Oct |
+over 3,50,000 customers everyday Ordered List Type: Medical Reports
+[ Medical ) Doctor Consultation = ici
+50% Off
+Data safety ee 626888
+My Wallet FlaxiRewards My Complaints * = Jul 13, 2023
+Safety starts with understanding how developers History
+collect and share your data, Data privacy and
+security practices may vary based on your use, bait Delste.
+region and age. The developer provided this
+information and may update it over tine. = 2 2 R @
+= iS % oS
+Menu Pharmacy Doctor Diagnostics = Account Sort Filter
+<2 _Noutiata SRSTEATATRTITA nacties ne eee CE“
+
+Install MedPlus Mart app:
+Google Play/ App Store.
+
+After installing, you must
+register with the same
+mobile number as your
+MedPlus Advantage Plan.
+
+Click on the band on top,
+where your name is
+mentioned.
+
+In this section, "Explore
+More", click on "Health
+Records’.
+
+In this section you can
+access visit/ test reports.
+
+In the band on top, click on
+“Health Trends’.
+
+<@ HealthTrends
+
+Reckoner
+
+QF
+
+Srinivas Reddy
+
+Change Patient >
+
+Hemoglobin Alc
+
+O6t 13.207 WIN 2028
+
+Hemoglobin Ate (
+
+6.1 6.1 63 67
+Vitamin B12
+seu wcsam |
+Vitamin B12 (value in pg/mL)
+273 434
+
+Prostate Specific Antigen (PSA)
+
+Prostate Specific Antigen (Total) (value in ng/mL)
+
+0.39 0.49
+
+Click on "Reckoner", to see
+the test-wise tabulation of
+your lab results, from past
+and current visits.
+
+Page 4 of 4
+
+
+--- Page 7 ---
+sJAG AJ8A9 9DUO BSOP J98]S00g
+
+SH UBIY Ye S}ENPIAIPU|
+
+(M‘A‘O ‘¥ di9)
+jedD0908ulUa|
+
+(azenbepeu S11 Usly ye S]eENpIAIPU sajsea
+ase $1931} $1 AJUO papuaWIWWODAJ) ASOP 9]8UIS ISH Held Ie SJENPIAIPUL ISeOW
+ajenbepeul aie sj9ai JI AJUO papuawwode Anleqoys 499Ue9 J9AH siye sjJenplAlpu snneda
+peul 1} JL AjUo pap Y Jo asnea Zulpeay e si snug saneday 1S! JENpIAIpU| d sii H
+pap9eu Ja}sO0q ON SH YsiY ye S}ENPIAIPU] Vv saneday
+poesodxa uayM Ulngo)sounWUI ainsodxa-}sod Jo (SJauMmo jad pue
+Solqey-Nuy
+ou yum ¢ Aeq pue Q Aeq je sasop Z ueloiskyd Ja 811) YSU-YSIY Je S}ENPIAIPU|
+(€ZASdd
+Ppapaeu Ja}]so0q ON SH Ysiy Je S}ENPIAIPU! JO SUAGY < Je 104 “OZAOd “STADd)
+yeo0090WNaUd
+papeaau Ja}S00g ON SU Ysiy je S]ENPIAIPUI JO SIAQG < e404 J91SO7
+alenbspeul ae si9ii) JI AJUO papuswiwoI9a Suonoajul jeuaied Aepuooas aoualiadxe SUNLULUI JOU ale OYM 7}e JO. eyjaowe
+peul 1} JL AJUO pap Y B}aDUJeA UUM S]ENPIAIPUI Jo %OT 1} YM ne 4104 TEIeA
+siAg AlQA8 BDU BSOp 19}S00g Janay ploydAy payeanun 105 aes Aneuory payeol|pulesuod jf 1da0xa ye 4104 ploudA,
+%OE SI UOIe]Ndod payeulddeA
+AKOTA
+SJAQT AJ8A9 BDU BSOP J9}S00g Ayood 10 payeursdequn 10) ayes ANeLOW pay}ed!pulesjuod JI |daoxa ye 104 snue}a]
+eZuanyul JO Suo|eoNdwos Osu
+asop jenuuy ezuanyu|
+UOWWOD 94} JO aUO SI ElUOWNSUd UsIY Je S]ENpIAIpU! 104 Ajjeloads~a) ye 104
+papeou 101800 oN (UOLWWOD }SOWW au} Bulag (a]}ewWaj pue ayew AdH
+
+J99ULD ]E9IN99) J2DULD 0} Pd) UED AdH
+
+%OT 01 HOT Se ysiy se aq
+ued ELaUYdIp payeasuN JO} ayes Ae WoW
+
+SJAGQ JO a8e BU} }II1 SIAOT, A1aA9 BDUQC 219)]S00g
+siAp9 01 ST :di3 a8y
+
+poziunwiu Apeanye J MOU) PINoys no,
+
+osm POW | "Ow
+
+Aeme ajilus
+
+y}0q) payesipusesuod J! }daoxa ye 404
+
+payeosipulesjuod jI }daoxa ye 104
+
+211 9/2} p]NOYS OUM
+
+ploxo] evauydiq
+
+aUlDDeA
+
+‘AePO} JOUS BUC :SN|qpayy ye SeuloIe/\
+
+
+
+--- Page 8 ---
+Feedback and Result Queries
+wecare@medplusindia.com
+
+© medplusmart.com
+@ +9140 6700 6700
+
+RECOMMENDED
+
+LIFESTYLE-DISEASES Dr. Venkat Nageshwar Goud
+ASSESSMENT TESTS HOD - radiology & Chief Radiologist
+
+1 ESSENTIAL INSIGHT INTO YOUR BODY COMPOSITION
+—_ t mo % yt t
+
+BODY FAT ANALYSIS (DEXA)
+
+UTD iy |] Mm MEDPLUS ADVANTAGE & 799
+
+Our DEXA machines use very low
+levels of x-rays to separately
+measure Fat mass, Lean mass and
+Bone mass.
+
+— ANDROID
+
+— GYNOID
+
+With data your Physician or fitness FAT
+trainer can build a safe weight
+
+reduction/ gain program. Android refers to the
+
+midsection of the torso, in
+The progress of your program can the waist area, under the rib
+also be measured by regularly cage
+
+monitoring Fat mass, Lean mass Goa Wl Pe ta Ball oa
+v
+and Bone mass.
+
+FAT%
+
+Gynoid refers to the lower
+torso, in the hip area, down
+to the top of the thighs
+
+FOR ANDROID AND GYNOID REGIONS
+
+2 BEST VALUE, IF YOU ARE > 40 YEARS
+
+CT - CARDIAC CALCIUM SCORING
+
+Neda Lt] sym MEDPLUS ADVANTAGE € 1299
+
+Quick and noninvasive. This scan
+takes less than 5mins.
+
+The detailed images can help your
+Physician decide if you need
+treatment to prevent a heart
+attack or stroke.
+
+You can return to normal activities
+right after the test.
+
+At MedPlus you can avail our 128s
+Cardiac CT (low-radiation) for
+Calcium Score test.
+
+For Bookings Call: 040 6700 6700
+
+
+--- Page 9 ---
+Feedback and Result Queries
+wecare@medplusindia.com
+
+@ medplusmart.com
+@ +91 40 6700 6700
+
+Be ALERT To Your
+KIDNEY HEALTH
+
+Do any of these apply to you?
+
+[_] OBESITY
+
+[_] DIABETES
+
+[_] HYPERTENSION
+
+[_] CARDIO VASCULAR DISEASE
+
+[-] FAMILY HISTORY OF KIDNEY DISEASE
+
+If YES, Then Take eGFR Test (p
+
+ESTIMATED GLOMERULAR FILTRATION
+RATE (OR, eGFR)
+
+What is eGFR test?
+
+Glomeruli are tiny filters in your kidneys
+that help remove toxins (waste) from
+your blood. Estimated glomerular
+filtration rate (eGFR) measures how
+much blood these filters clean every
+minute based on your body size.
+
+What does eGFR tell healthcare
+providers?
+
+Your kidneys are part of the urinary
+system. Kidney disease occurs when
+one or both kidneys have damage.
+When you have kidney disease,
+dangerous toxins can build up in your
+blood.
+
+Kidney disease symptoms, such as
+frequent urination and muscle spasms,
+may not occur until you lose up to 40%
+of kidney function. eGFR helps detect
+the disease early so that you can start
+treatments to slow or stop kidney
+damage.
+
+Dr. Dinesh Deeti
+
+MBBS, MD General Medicine
+MedPlus Diagnostics
+Dilsukhnagar, Hyderabad
+
+STAGES OF CHRONIC KIDNEY DISEASE
+
+Stage 2
+
+Stage 3a
+
+Stage 3b
+
+Stage 4
+
+Stage 5
+
+Kidney damage with normal
+kidney function
+
+Kidney damage with mild loss
+of kidney function
+
+Mild to moderate loss of
+kidney function
+
+Moderate to severe
+loss of kidney function
+
+Severe loss of kidney function
+
+Kidney failure
+
+eGFR
+
+90 or higher
+
+89 to 60
+
+59 to 45
+
+44 to 30
+
+29 to 15
+
+Less than 15
+
+For Bookings Call: 040 6700 6700
+
+as
+
+% OF KIDNEY
+FUNCTION
+
+90-100%
+
+89-60%
+
+59-45%
+
+a
+
+44-30%
+
+29-15% |
+
+\ Less than’,
+15%,
+~~
