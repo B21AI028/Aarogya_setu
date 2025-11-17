@@ -3,8 +3,8 @@
 lab_pipeline.py
 
 Run with:
-  python lab_pipeline.py --manual
-  python lab_pipeline.py --pdf uploads/Nimi.pdf
+  python aarogya-rag/src/extraction_pipeline.py --manual
+  python aarogya-rag/src/extraction_pipeline.py --pdf uploads/Nimi.pdf
 
 This script:
 - can use provided manual extracted data (your pasted lab_values) when PDF extraction isn't available
