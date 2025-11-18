@@ -195,7 +195,7 @@ def extract_keywords(query: str) -> str:
         resp = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a medical query analyzer. Extract 3-5 key medical terms or keywords from the user's question that are crucial for providing an accurate answer based on lab reports. Output only the comma-separated list of keywords, no explanations."},
+                {"role": "system", "content": "You are a medical query analyzer. Extract 3-5 key lab parameters or medical terms from the user's question that are crucial for providing an accurate answer based on lab reports. Output only the comma-separated list of parameters, no explanations."},
                 {"role": "user", "content": f"Query: {query}"}
             ],
             temperature=0.1,
