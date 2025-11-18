@@ -1,4 +1,3 @@
-
 import os
 import sys
 import json
@@ -10,29 +9,23 @@ from sqlalchemy.orm import sessionmaker
 from sentence_transformers import SentenceTransformer
 import numpy as np
 import warnings
-
 load_dotenv()
-
 # ----------------- Config -----------------
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@localhost:5432/aarogya")
 OPENAI_KEY = os.getenv("OPENAI_API_KEY", None)
 USE_OPENAI = bool(OPENAI_KEY)
-
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
-
 # Embedding models (may auto-switch to match stored dim)
 preferred_model = "abhinand/MedEmbed-base-v0.1"
 candidate_models = [
-    "abhinand/MedEmbed-base-v0.1",  # 768-dim
-    "all-MiniLM-L6-v2",             # 384-dim
+    "abhinand/MedEmbed-base-v0.1", # 768-dim
+    "all-MiniLM-L6-v2", # 384-dim
     "sentence-transformers/all-mpnet-base-v2"
 ]
 embedding_model = SentenceTransformer(preferred_model)
-
 # OpenAI client (if available)
 client = OpenAI(api_key=OPENAI_KEY) if USE_OPENAI else None
-
 # ----------------- Helpers -----------------
 def _fetch_one(query: str, params: dict):
     """Utility to run a single-row query safely."""
@@ -41,8 +34,6 @@ def _fetch_one(query: str, params: dict):
         return session.execute(text(query), params).fetchone()
     finally:
         session.close()
-
-
 def detect_stored_dim_for_patient(patient_id: str):
     session = Session()
     try:
@@ -58,7 +49,6 @@ def detect_stored_dim_for_patient(patient_id: str):
             """), {"patient_id": patient_id}).fetchone()
         except Exception:
             row = None
-
         # Fallback to vector-based schema
         if not row:
             try:
@@ -93,7 +83,6 @@ def detect_stored_dim_for_patient(patient_id: str):
             return None
     finally:
         session.close()
-
 def find_matching_model_for_dim(dim: int):
     global embedding_model
     if dim is None:
@@ -108,7 +97,6 @@ def find_matching_model_for_dim(dim: int):
         except Exception:
             continue
     return None
-
 def cosine_sim(a: np.ndarray, b: np.ndarray):
     a = np.asarray(a, dtype=float)
     b = np.asarray(b, dtype=float)
@@ -121,7 +109,6 @@ def cosine_sim(a: np.ndarray, b: np.ndarray):
     if denom == 0:
         return 0.0
     return float(np.dot(a, b) / denom)
-
 def retrieve_chunks_python(patient_id: str, query: str, k=3):
     stored_dim = detect_stored_dim_for_patient(patient_id)
     if stored_dim:
@@ -132,7 +119,6 @@ def retrieve_chunks_python(patient_id: str, query: str, k=3):
                 print(f"[info] switched embedding model to '{matched}' to match stored dim {stored_dim}.")
             else:
                 warnings.warn(f"No candidate model matched stored dim {stored_dim}. Proceeding with current model (may reduce accuracy).")
-
     session = Session()
     try:
         rows = []
@@ -148,7 +134,6 @@ def retrieve_chunks_python(patient_id: str, query: str, k=3):
         except Exception:
             rows = []
             mode = None
-
         # Fallback to vector-based schema
         if not rows:
             try:
@@ -162,10 +147,8 @@ def retrieve_chunks_python(patient_id: str, query: str, k=3):
             except Exception:
                 rows = []
                 mode = None
-
         if not rows:
             return []
-
         q_emb = embedding_model.encode(query)
         candidates = []
         for r in rows:
@@ -200,26 +183,51 @@ def retrieve_chunks_python(patient_id: str, query: str, k=3):
         return candidates[:k]
     finally:
         session.close()
-
+# ----------------- Keyword extraction using OpenAI -----------------
+def extract_keywords(query: str) -> str:
+    """
+    Use OpenAI to extract important keywords for the query to aid in answer generation.
+    Returns the keywords as a string, or empty if not available.
+    """
+    if not USE_OPENAI or not client:
+        return ""
+    try:
+        resp = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a medical query analyzer. Extract 3-5 key medical terms or keywords from the user's question that are crucial for providing an accurate answer based on lab reports. Output only the comma-separated list of keywords, no explanations."},
+                {"role": "user", "content": f"Query: {query}"}
+            ],
+            temperature=0.1,
+            max_tokens=50
+        )
+        keywords = resp.choices[0].message.content.strip()
+        return keywords
+    except Exception as e:
+        print(f"[warning] Keyword extraction failed: {str(e)}")
+        return ""
 # ----------------- Answer generation using OpenAI -----------------
 def generate_answer(chunks: list, query: str):
     """
     Use OpenAI chat completion if available. Otherwise fall back to a simple chunk-summary response.
+    Incorporates extracted keywords as additional context for the question.
     """
     if not chunks:
         return "No context available for this patient."
-
     # Build compact context (trim very long chunks to avoid token bloat)
     max_chars_per_chunk = 2000
     context = "\n\n".join([ (c["text"][:max_chars_per_chunk] + ("..." if len(c["text"]) > max_chars_per_chunk else "")) for c in chunks ])
-
+    # Extract keywords for enhanced context
+    keywords = extract_keywords(query)
+    print(f"[info] extracted keywords: {keywords}")
+    key_context = f"Key medical terms: {keywords}\n" if keywords else ""
     system_msg = (
         "You are a helpful and cautious medical assistant. "
         "Answer concisely and reference only the provided lab report context. "
+        "Focus on the key medical terms when generating the response. "
         "If you are uncertain, advise consulting a clinician."
     )
-    user_msg = f"CONTEXT:\n{context}\n\nQUESTION: {query}\n\n we have give ans point to point no extra info"
-
+    user_msg = f"{key_context}CONTEXT:\n{context}\n\nQUESTION: {query}\n\n we have give ans point to point no extra info"
     # Use OpenAI if configured
     if USE_OPENAI and client:
         try:
@@ -237,11 +245,10 @@ def generate_answer(chunks: list, query: str):
         except Exception as e:
             # Log but fall back
             print("[warning] OpenAI call failed:", str(e))
-
     # Fallback deterministic response if OpenAI not available or fails
     top_excerpt = "\n\n---\n\n".join([c["text"][:400] for c in chunks])
-    return f"Based on the patient's lab report excerpts:\n\n{top_excerpt}\n\n(Consult clinician for interpretation.)"
-
+    fallback_msg = f"Key terms: {keywords}\n" if keywords else ""
+    return f"{fallback_msg}Based on the patient's lab report excerpts:\n\n{top_excerpt}\n\n(Consult clinician for interpretation.)"
 # ----------------- Run example -----------------
 def lookup_latest_patient_id():
     """Return most recent patient_id from lab_reports."""
@@ -256,8 +263,6 @@ def lookup_latest_patient_id():
         return row[0] if row else None
     finally:
         session.close()
-
-
 def lookup_patient_id_by_name(name: str):
     session = Session()
     try:
@@ -271,8 +276,6 @@ def lookup_patient_id_by_name(name: str):
         return row[0] if row else None
     finally:
         session.close()
-
-
 def list_recent_patients(limit: int = 5):
     session = Session()
     try:
@@ -285,8 +288,6 @@ def list_recent_patients(limit: int = 5):
         return [(r[0], r[1]) for r in rows]
     finally:
         session.close()
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Query RAG over lab reports")
     parser.add_argument("--patient-id", dest="patient_id", default=None, help="Patient UUID to query")
@@ -295,34 +296,27 @@ if __name__ == "__main__":
     parser.add_argument("--question", dest="question", default="My uric acid value is?", help="User question")
     parser.add_argument("-k", dest="k", type=int, default=3, help="Top-K chunks to retrieve")
     args = parser.parse_args()
-
     print("Running RAG query pipeline...")
-
     # Resolve patient_id
     patient_id = args.patient_id
     if not patient_id and args.patient_name:
         patient_id = lookup_patient_id_by_name(args.patient_name)
     if not patient_id:
         patient_id = lookup_latest_patient_id()
-
     if not patient_id:
-        print("No patient data found in DB.\n\nNext steps:\n- Run the extraction pipeline to ingest a report, e.g.:\n  python aarogya-rag/src/extraction_pipeline.py --manual\n- Ensure the same DATABASE_URL is used by both extraction and query pipelines (see .env).")
+        print("No patient data found in DB.\n\nNext steps:\n- Run the extraction pipeline to ingest a report, e.g.:\n python aarogya-rag/src/extraction_pipeline.py --manual\n- Ensure the same DATABASE_URL is used by both extraction and query pipelines (see .env).")
         sys.exit(1)
-
     print("Detecting stored embedding dimension for patient...")
     dim = detect_stored_dim_for_patient(patient_id)
     print("Stored embedding dim:", dim)
-
     print("Retrieving chunks (with automatic model selection)...")
     topk = retrieve_chunks_python(patient_id, args.question, k=args.k)
     print("Retrieved top chunks (id, sim):", [(c['id'], round(c['sim'], 4)) for c in topk])
-
     if not topk:
         print("\nNo chunks found for this patient.\n\nTroubleshooting:\n- Confirm the extraction pipeline inserted chunks for this patient_id.\n- Verify both scripts point to the same DB via DATABASE_URL (.env).\n- List recent patients to cross-check IDs:")
         recents = list_recent_patients(5)
         for pid, pname in recents:
-            print(f"  - {pname or 'Unknown'}: {pid}")
-
+            print(f" - {pname or 'Unknown'}: {pid}")
     print("\nGenerating answer (OpenAI or fallback)...")
     answer = generate_answer(topk, args.question)
     print("\nANSWER:\n", answer)
